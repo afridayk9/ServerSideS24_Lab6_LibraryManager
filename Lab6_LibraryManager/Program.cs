@@ -1,5 +1,5 @@
 using Lab6_LibraryManager;
-//using Lab6_LibraryManager.Data;
+using Lab6_LibraryManager.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddTransient<UsersService>();
+builder.Services.AddTransient<BooksService>();
 
 var app = builder.Build();
 
