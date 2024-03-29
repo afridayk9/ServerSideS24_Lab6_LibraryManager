@@ -1,4 +1,5 @@
-﻿using TableModels;
+﻿using Microsoft.EntityFrameworkCore;
+using TableModels;
 
 namespace Lab6_LibraryManager.Services;
 
@@ -8,5 +9,21 @@ namespace Lab6_LibraryManager.Services;
 /// </summary>
 public class UsersService : GenericCrudService<Users>
 {
-    public UsersService(ApplicationDbContext options) : base(options) { }
+    private readonly ApplicationDbContext _context;
+    
+    public UsersService(ApplicationDbContext options) : base(options) 
+    { 
+        _context = options;
+    }
+
+    public async Task<Users> GetByUsername(string userName)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Name == userName);
+    }
+
+    public async Task<List<Books>> GetCheckedOutBooks(int userId)
+    {
+        return await _context.Books.Where(book => book.CheckedOutBy == userId).ToListAsync();
+    }
+
 }

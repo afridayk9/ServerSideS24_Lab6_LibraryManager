@@ -1,0 +1,87 @@
+﻿@page "/cr_users"
+@using Lab6_LibraryManager.Services
+@using TableModels
+@inject UsersService UsersService
+@inject BooksService BooksService
+
+<h3>Users</h3>
+<h3>Enter Username</h3>
+<EditForm Model="username" OnValidSubmit="SearchUser">
+    <InputText id="username" @bind-Value="username" placeholder="Username" />
+    <button type="submit">Search</button>
+</EditForm>
+
+@if (searchPerformed && user == null)
+{
+    <p>User not found</p>
+}
+else if (user != null)
+{
+    <p>User found: @user.Name  Email: @user.Email</p>
+    <h3>Checked Out Books</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in checkedOutBooks)
+            {
+                <tr>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.ISBN</td>
+                    <td>
+                        <button @onclick="() => ReturnBook(book)">Return</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<br />
+
+<h3>Create User</h3>
+<EditForm Model="newUser" OnValidSubmit="AddUser">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="username" @bind-Value="newUser.Name" placeholder="Username" />
+    <InputText id="email" @bind-Value="newUser.Email" placeholder="Email" />
+
+    <button type="submit">Create User</button>
+</EditForm>
+
+
+@code {
+    private string username = "";
+    private Users user;
+    private Users newUser = new Users();
+    private bool searchPerformed = false;
+    private List<Books> checkedOutBooks;
+
+    private async Task SearchUser()
+    {
+        user = await UsersService.GetByUsername(username);
+        searchPerformed = true;
+        if (user != null)
+        {
+            checkedOutBooks = await UsersService.GetCheckedOutBooks(user.Id);
+        }
+    }
+
+    private async Task AddUser()
+    {
+        UsersService.Add(newUser);
+        newUser = new Users();        
+    }
+
+    private async Task ReturnBook(Books book)
+    {
+        await BooksService.Return(book.Id);
+        checkedOutBooks = await UsersService.GetCheckedOutBooks(user.Id);
+    }
+}

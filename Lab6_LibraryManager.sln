@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34525.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lab6_LibraryManager", "Lab6_LibraryManager\Lab6_LibraryManager.csproj", "{166AABAC-672B-43D0-9A92-ADFD4F7FA349}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lab6_LibraryManager", "Lab6_LibraryManager\Lab6_LibraryManager.csproj", "{166AABAC-672B-43D0-9A92-ADFD4F7FA349}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableModels", "TableModels\TableModels.csproj", "{2A208A55-A868-44A5-95DD-08FE4616F447}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TableModels", "TableModels\TableModels.csproj", "{2A208A55-A868-44A5-95DD-08FE4616F447}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

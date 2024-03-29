@@ -1,0 +1,127 @@
+﻿@page "/"
+@using Lab6_LibraryManager.Services
+@using TableModels
+@inject BooksService BooksService
+@inject UsersService UsersService
+
+<h1>Books</h1>
+
+<input type="text" @bind="searchString" @bind:event="oninput" placeholder="Search..." />
+
+@if (books == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>                
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in books.Where(Search))
+            {
+                <tr>                    
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.ISBN</td>
+                    <td>
+                        @if (book.CheckedOutBy == null)
+                        {
+                            <button @onclick="() => OpenCheckOutInput(book)">Check Out</button>
+                            if (bookToCheckOut != null && bookToCheckOut.Id == book.Id)
+                            {
+                                <input @bind="username" placeholder="Username" />
+                                <button @onclick="CheckOutBook">Submit</button>
+                            }
+                        }
+                        else
+                        {
+                            <p>Checked Out</p>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (showCheckOutModal)
+    {
+        <div class="modal">
+            <div class="modal-content">
+                <h3>Enter your username to check out this book</h3>
+                <EditForm Model="username" OnValidSubmit="CheckOutBook">
+                    <InputText id="username" @bind-Value="username" placeholder="Username" />
+                    <button type="submit">Check Out</button>
+                </EditForm>
+            </div>
+        </div>
+    }
+
+
+}
+
+@code {
+    private string searchString = "";
+    private string username = "";
+    private Books bookToCheckOut;
+    private bool showCheckOutModal = false;
+    private List<Books> books = new List<Books>();
+
+    protected override void OnInitialized()
+    {
+        books = BooksService.GetAll();
+    }
+
+    private List<Books> GetAll()
+    {
+        books = BooksService.GetAll();
+        return books;
+    }
+
+    private void OpenCheckOutInput(Books book)
+    {
+        bookToCheckOut = book;
+    }
+
+    private async Task CheckOutBook()
+    {
+        var user = await UsersService.GetByUsername(username);
+        if (user != null)
+        {
+            await BooksService.CheckOut(bookToCheckOut.Id, user.Id);
+            books = BooksService.GetAll();
+        }
+
+        bookToCheckOut = null;
+    }
+
+    private bool Search(Books book)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            return true;
+        }
+
+        if (book.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (book.Author.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (book.ISBN.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return false;
+    }
+    
+}

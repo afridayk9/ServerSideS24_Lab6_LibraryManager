@@ -1,0 +1,122 @@
+﻿@page "/CUDBooks"
+@using Lab6_LibraryManager.Services
+@using TableModels
+@inject BooksService BooksService
+
+<h1>Books</h1>
+<input type="text" @bind="searchString" @bind:event="oninput" placeholder="Search..." />
+
+@if (books == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var book in books.Where(Search))
+            {
+                <tr>
+                    <td>@book.Id</td>
+                    <td>@book.Title</td>
+                    <td>@book.Author</td>
+                    <td>@book.ISBN</td>
+                    <td>
+                        <button @onclick="() => UpdateBook(book)">Update</button>
+                        <button @onclick="() => DeleteBook(book)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h3>Add/Update Book</h3>
+<EditForm Model="book" OnValidSubmit="AddBook">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="title" @bind-Value="book.Title" placeholder="Title" />
+    <InputText id="author" @bind-Value="book.Author" placeholder="Author" />
+    <InputText id="isbn" @bind-Value="book.ISBN" placeholder="ISBN" />
+
+    <button type="submit">Submit</button>
+</EditForm>
+
+@code {
+    private string searchString = "";
+    private Books book = new Books();
+    private List<Books> books = new List<Books>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        books = BooksService.GetAll();
+    }
+
+    private List<Books> GetAll()
+    {
+        books = BooksService.GetAll();
+        return books;
+    }
+
+    private void AddBook()
+    {
+        if(book.Id == 0)
+        {
+            BooksService.Add(book);
+        }
+        else
+        {
+            BooksService.Update(book);
+        }
+        book = new Books();
+        books =  BooksService.GetAll();
+        StateHasChanged();
+    }
+
+    private void UpdateBook(Books book)
+    {
+        this.book = book;
+        StateHasChanged();
+    }
+
+    private void DeleteBook(Books book)
+    {
+        BooksService.Delete(book);
+        GetAll();
+    }
+
+    private bool Search(Books book)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            return true;
+        }
+
+        if (book.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (book.Author.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (book.ISBN.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+}
