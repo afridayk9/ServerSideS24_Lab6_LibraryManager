@@ -1,4 +1,4 @@
-﻿@page "/cr_users"
+﻿@page "/crud_users"
 @using Lab6_LibraryManager.Services
 @using TableModels
 @inject UsersService UsersService
@@ -18,23 +18,32 @@
 else if (user != null)
 {
     <p>User found: @user.Name  Email: @user.Email</p>
+    <button @onclick="() => editingUser = true">Edit</button>
+    @if (editingUser)
+    {
+        <EditForm Model="user" OnValidSubmit="UpdateUser">
+            <InputText id="username" @bind-Value="user.Name" placeholder="Username" />
+            <InputText id="email" @bind-Value="user.Email" placeholder="Email" />
+            <button type="submit">Save</button>
+        </EditForm>
+    }
     <h3>Checked Out Books</h3>
     <table>
         <thead>
             <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>ISBN</th>
+                <th style="border: 1px solid black; padding: 8px; text-align: left;">Title</th>
+                <th style="border: 1px solid black; padding: 8px; text-align: left;">Author</th>
+                <th style="border: 1px solid black; padding: 8px; text-align: left;">ISBN</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var book in checkedOutBooks)
             {
                 <tr>
-                    <td>@book.Title</td>
-                    <td>@book.Author</td>
-                    <td>@book.ISBN</td>
-                    <td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.Title</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.Author</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.ISBN</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: left;">
                         <button @onclick="() => ReturnBook(book)">Return</button>
                     </td>
                 </tr>
@@ -62,6 +71,7 @@ else if (user != null)
     private Users newUser = new Users();
     private bool searchPerformed = false;
     private List<Books> checkedOutBooks;
+    private bool editingUser = false;
 
     private async Task SearchUser()
     {
@@ -83,5 +93,12 @@ else if (user != null)
     {
         await BooksService.Return(book.Id);
         checkedOutBooks = await UsersService.GetCheckedOutBooks(user.Id);
+    }
+
+    private Task UpdateUser()
+    {
+        UsersService.Update(user);
+        editingUser = false;
+        return Task.CompletedTask;
     }
 }

@@ -17,18 +17,18 @@ else
     <table>
         <thead>
             <tr>                
-                <th>Title</th>
-                <th>Author</th>
-                <th>ISBN</th>
+                <th style="border: 1px solid black; padding: 8px; text-align: left;">Title</th>
+                <th style="border: 1px solid black; padding: 8px; text-align: left;">Author</th>
+                <th style="border: 1px solid black; padding: 8px; text-align: left;">ISBN</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var book in books.Where(Search))
             {
-                <tr>                    
-                    <td>@book.Title</td>
-                    <td>@book.Author</td>
-                    <td>@book.ISBN</td>
+                <tr>
+                    <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.Title</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: left;"> @book.Author</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.ISBN</td>
                     <td>
                         @if (book.CheckedOutBy == null)
                         {
