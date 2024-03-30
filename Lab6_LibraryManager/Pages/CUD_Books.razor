@@ -2,6 +2,7 @@
 @using Lab6_LibraryManager.Services
 @using TableModels
 @inject BooksService BooksService
+@inject UsersService UsersService
 
 <h1>Books</h1>
 <input type="text" @bind="searchString" @bind:event="oninput" placeholder="Search..." />
@@ -19,6 +20,7 @@ else
                 <th style="border: 1px solid black; padding: 8px; text-align: left;">Title</th>
                 <th style="border: 1px solid black; padding: 8px; text-align: left;">Author</th>
                 <th style="border: 1px solid black; padding: 8px; text-align: left;">ISBN</th>
+                <th style="border: 1px solid black; padding: 8px; text-align: left;">Checked Out By</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +31,7 @@ else
                     <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.Title</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.Author</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.ISBN</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.CheckedOutBy</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: left;">
                         <button @onclick="() => UpdateBook(book)">Update</button>
                         <button @onclick="() => DeleteBook(book)">Delete</button>
@@ -51,14 +54,39 @@ else
     <button type="submit">Submit</button>
 </EditForm>
 
+<h3>Users</h3>
+<table>
+    <thead>
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; text-align: left;">ID</th>
+            <th style="border: 1px solid black; padding: 8px; text-align: left;">Username</th>
+            <th style="border: 1px solid black; padding: 8px; text-align: left;">Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in users)
+        {
+            <tr>
+                <td style="border: 1px solid black; padding: 8px; text-align: left;">@user.Id</td>
+                <td style="border: 1px solid black; padding: 8px; text-align: left;">@user.Name</td>
+                <td style="border: 1px solid black; padding: 8px; text-align: left;">@user.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
 @code {
     private string searchString = "";
     private Books book = new Books();
     private List<Books> books = new List<Books>();
+    private List<Users> users = new List<Users>();
 
-    protected override async Task OnInitializedAsync()
+
+    protected override void OnInitialized()
     {
         books = BooksService.GetAll();
+        users = UsersService.GetAll();
     }
 
     private List<Books> GetAll()

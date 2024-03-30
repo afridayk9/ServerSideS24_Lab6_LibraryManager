@@ -19,6 +19,8 @@ else if (user != null)
 {
     <p>User found: @user.Name  Email: @user.Email</p>
     <button @onclick="() => editingUser = true">Edit</button>
+    <button @onclick="DeleteUser" disabled="@hasBooksCheckedOut">Delete</button>
+    <div style="font-size: 0.8em;">*Note: You must return your books before you delete your User information.</div>
     @if (editingUser)
     {
         <EditForm Model="user" OnValidSubmit="UpdateUser">
@@ -72,6 +74,7 @@ else if (user != null)
     private bool searchPerformed = false;
     private List<Books> checkedOutBooks;
     private bool editingUser = false;
+    private bool hasBooksCheckedOut => checkedOutBooks != null && checkedOutBooks.Count > 0;
 
     private async Task SearchUser()
     {
@@ -100,5 +103,16 @@ else if (user != null)
         UsersService.Update(user);
         editingUser = false;
         return Task.CompletedTask;
+    }
+
+    private async Task DeleteUser()
+    {
+        var deleted = await UsersService.Delete(user.Id);
+        if(deleted)
+        {
+            user = null;
+            checkedOutBooks = null;
+        }
+        
     }
 }
