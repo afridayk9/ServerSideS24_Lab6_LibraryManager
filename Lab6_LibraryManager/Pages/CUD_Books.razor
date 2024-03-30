@@ -5,7 +5,7 @@
 @inject UsersService UsersService
 
 <h1>Books</h1>
-<input type="text" @bind="searchString" @bind:event="oninput" placeholder="Search..." />
+<input type="text" @bind="searchStringBook" @bind:event="oninput" placeholder="Search..." />
 
 @if (books == null)
 {
@@ -24,7 +24,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var book in books.Where(Search))
+            @foreach (var book in books.Where(BookSearch))
             {
                 <tr>
                     <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.Id</td>
@@ -33,8 +33,8 @@ else
                     <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.ISBN</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.CheckedOutBy</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: left;">
-                        <button @onclick="() => UpdateBook(book)">Update</button>
-                        <button @onclick="() => DeleteBook(book)">Delete</button>
+                        <button type="button" class="btn btn-primary" @onclick="() => UpdateBook(book)">Update</button>
+                        <button type="button" class="btn btn-danger" @onclick="() => DeleteBook(book)">Delete</button>
                     </td>
                 </tr>
             }
@@ -51,10 +51,11 @@ else
     <InputText id="author" @bind-Value="book.Author" placeholder="Author" />
     <InputText id="isbn" @bind-Value="book.ISBN" placeholder="ISBN" />
 
-    <button type="submit">Submit</button>
+    <button type="submit" class="btn btn-success">Submit</button>
 </EditForm>
 
 <h3>Users</h3>
+<input type="text" @bind="searchStringUser" @bind:event="oninput" placeholder="Search..." />
 <table>
     <thead>
         <tr>
@@ -64,7 +65,7 @@ else
         </tr>
     </thead>
     <tbody>
-        @foreach (var user in users)
+        @foreach (var user in users.Where(UserSearch))
         {
             <tr>
                 <td style="border: 1px solid black; padding: 8px; text-align: left;">@user.Id</td>
@@ -77,7 +78,8 @@ else
 
 
 @code {
-    private string searchString = "";
+    private string searchStringBook = "";
+    private string searchStringUser = "";
     private Books book = new Books();
     private List<Books> books = new List<Books>();
     private List<Users> users = new List<Users>();
@@ -122,27 +124,47 @@ else
         GetAll();
     }
 
-    private bool Search(Books book)
+    private bool BookSearch(Books book)
     {
-        if (string.IsNullOrWhiteSpace(searchString))
+        if (string.IsNullOrWhiteSpace(searchStringBook))
         {
             return true;
         }
 
-        if (book.Title.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (book.Title.Contains(searchStringBook, StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }
 
-        if (book.Author.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (book.Author.Contains(searchStringBook, StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }
 
-        if (book.ISBN.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+        if (book.ISBN.Contains(searchStringBook, StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }
+
+        return false;
+    }
+
+    private bool UserSearch(Users user)
+    {
+        if (string.IsNullOrWhiteSpace(searchStringUser))
+        {
+            return true;
+        }
+
+        if (user.Name.Contains(searchStringUser, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (user.Email.Contains(searchStringUser, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }        
 
         return false;
     }

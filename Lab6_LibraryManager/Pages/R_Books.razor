@@ -32,11 +32,11 @@ else
                     <td>
                         @if (book.CheckedOutBy == null)
                         {
-                            <button @onclick="() => OpenCheckOutInput(book)">Check Out</button>
+                            <button type="button" class="btn btn-primary" @onclick="() => OpenCheckOutInput(book)">Check Out</button>
                             if (bookToCheckOut != null && bookToCheckOut.Id == book.Id)
                             {
                                 <input @bind="username" placeholder="Username" />
-                                <button @onclick="CheckOutBook">Submit</button>
+                                <button type="button" class="btn btn-success" @onclick="CheckOutBook">Submit</button>
                             }
                         }
                         else

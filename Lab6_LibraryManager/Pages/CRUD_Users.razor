@@ -4,11 +4,22 @@
 @inject UsersService UsersService
 @inject BooksService BooksService
 
-<h3>Users</h3>
+
+<h3>Create User</h3>
+<EditForm Model="newUser" OnValidSubmit="AddUser">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <InputText id="username" @bind-Value="newUser.Name" placeholder="Username" />
+    <InputText id="email" @bind-Value="newUser.Email" placeholder="Email" />
+
+    <button type="submit" class="btn btn-success">Create User</button>
+</EditForm>
+
 <h3>Enter Username</h3>
 <EditForm Model="username" OnValidSubmit="SearchUser">
     <InputText id="username" @bind-Value="username" placeholder="Username" />
-    <button type="submit">Search</button>
+    <button type="submit" class="btn btn-info">Search</button>
 </EditForm>
 
 @if (searchPerformed && user == null)
@@ -18,15 +29,15 @@
 else if (user != null)
 {
     <p>User found: @user.Name  Email: @user.Email</p>
-    <button @onclick="() => editingUser = true">Edit</button>
-    <button @onclick="DeleteUser" disabled="@hasBooksCheckedOut">Delete</button>
+    <button type="button" class="btn btn-primary" @onclick="() => editingUser = true">Edit</button>
+    <button type="button" class="btn btn-danger" @onclick="DeleteUser" disabled="@hasBooksCheckedOut">Delete</button>
     <div style="font-size: 0.8em;">*Note: You must return your books before you delete your User information.</div>
     @if (editingUser)
     {
         <EditForm Model="user" OnValidSubmit="UpdateUser">
             <InputText id="username" @bind-Value="user.Name" placeholder="Username" />
             <InputText id="email" @bind-Value="user.Email" placeholder="Email" />
-            <button type="submit">Save</button>
+            <button type="submit" >Save</button>
         </EditForm>
     }
     <h3>Checked Out Books</h3>
@@ -46,7 +57,7 @@ else if (user != null)
                     <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.Author</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: left;">@book.ISBN</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: left;">
-                        <button @onclick="() => ReturnBook(book)">Return</button>
+                        <button type="button" class="btn btn-warning" @onclick="() => ReturnBook(book)">Return</button>
                     </td>
                 </tr>
             }
@@ -55,16 +66,7 @@ else if (user != null)
 }
 <br />
 
-<h3>Create User</h3>
-<EditForm Model="newUser" OnValidSubmit="AddUser">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
 
-    <InputText id="username" @bind-Value="newUser.Name" placeholder="Username" />
-    <InputText id="email" @bind-Value="newUser.Email" placeholder="Email" />
-
-    <button type="submit">Create User</button>
-</EditForm>
 
 
 @code {
